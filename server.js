@@ -17,7 +17,7 @@ app.get('/', (request, response) => {
 });
 
 app.get('/show', (request, response) => {
-
+  response.render()
 });
 
 const cors = require('cors');

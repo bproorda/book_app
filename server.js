@@ -7,6 +7,9 @@ const express = require('express');
 const app = express();
 app.set('view engine', 'ejs');
 
+app.use(express.static('./public'))
+app.use(express.urlencoded({ extended: true }));
+
 // Routes
 app.get('/', (request, response) => {
     response.render('index');

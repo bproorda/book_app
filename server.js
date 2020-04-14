@@ -17,12 +17,10 @@ app.get('/', (request, response) => {
 });
 
 app.get('/show', (request, response) => {
-  // console.log('/show', request.query);
   response.render('pages/searches/show');
 });
-
-app.get('/searches', (request, response) => {
-  console.log('/searches', request.query);
+app.post('/searches', (request, response) => {
+  console.log('/searches', request.body);
   response.render('pages/searches/searches', {message1: 'The Library is closed due to PLAGUE!!!'});
 });
 

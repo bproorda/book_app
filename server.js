@@ -3,6 +3,7 @@
 require('dotenv').config();
 
 const express = require('express');
+const superagent = require('superagent');
 
 const app = express();
 app.set('view engine', 'ejs');
@@ -13,6 +14,10 @@ app.use(express.urlencoded({ extended: true }));
 // Routes
 app.get('/', (request, response) => {
   response.render('pages/index');
+});
+
+app.get('/show', (request, response) => {
+
 });
 
 const cors = require('cors');

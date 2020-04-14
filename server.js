@@ -5,6 +5,12 @@ require('dotenv').config();
 const express = require('express');
 // const pg = require('pg');
 
+// if (!process.env.DATABASE_URL) {
+//   throw 'DATABASE_URL is missing!';
+// }
+// const client = new pg.Client(process.env.DATABASE_URL);
+// client.on('error', err => { throw err; });
+
 const app = express();
 app.set('view engine', 'ejs');
 
@@ -19,13 +25,21 @@ app.get('/', (request, response) => {
 app.get('/show', (request, response) => {
   response.render('pages/searches/show');
 });
+
 app.post('/searches', (request, response) => {
   console.log('/searches', request.body);
-  response.render('pages/searches/searches', {message1: 'The Library is closed due to PLAGUE!!!'});
+  response.render('pages/searches/searches');
 });
 
-app.get('*', (req, res) => res.status(404).send('This route does not exist'));
+app.get('*', (req, res) => res.status(404).send('this route does not exist'));
 
+// client.connect()
+//   .then(() => {
+//     console.log('PG Connected!');
+
+//     app.listen(PORT, () => console.log(`App is listening on ${PORT}`));
+//   })
+//   .catch(err => { throw err; });
 
 const cors = require('cors');
 app.use(cors());
@@ -39,3 +53,4 @@ function errorHandler(err, response) {
   };
   response.render('pages/error', viewModel);
 }
+

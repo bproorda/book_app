@@ -12,8 +12,8 @@ app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.get('/', (request, response) => {
-    response.render('index');
-})
+  response.render('index');
+});
 
 const cors = require('cors');
 app.use(cors());

@@ -1,1 +1,59 @@
 /* layout.css */
+
+header {
+    padding-left: 10px;
+    background-color: black;
+    color: white;
+    height: 7%;
+
+}
+
+h1 {
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.search-heading {
+    height: 5%;
+    background-color: darkgray;
+    color: white;
+}
+
+h2 {
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+    text-align: center;
+}
+
+form {
+    text-align: center;
+    padding: 10px;
+}
+.search-library-button {
+    width: 75%;
+    height: 5vh;
+    background-color: black;
+    color: white;
+    border-radius: 5px;
+}
+
+.inputfield {
+    display: block;
+    margin: 0 auto;
+    width: 75%;
+    height: 5vh;
+    border-radius: 5px;
+}
+
+.search-radio {
+    margin: 0 auto;
+    width: 75%;
+    height: 5vh;
+    border-radius: 5px;
+    background-color: darkgray;
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+

@@ -7,30 +7,37 @@
         <title>Book Search</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="../styles/reset.css">
         <link rel="stylesheet" href="../styles/base.css">
+        <link rel="stylesheet" href="../styles/layout.css">
     </head>
     <body>
-        <h1>Search for Books</h1>
+    <header>
+        <h1>Best Books!</h1>
+    </header>
+    <div class="wrapper">
+        <div class="search-heading">
+            <h2>Search by Title or Author</h2>
+        </div>
       <form action="/searches" method="POST">
           <fieldset>
-              <legend>Search by</legend>
               <label>
-                  <span>Author: </span>
-              <input type="text" name="author" />
+              <input class ="inputfield" type="text" name="searchinput" placeholder="Enter a title or author" />
             </label>
-            <label>
-                <span>Title:</span>
-              <input type="text" name="title"/>
-            </label>
-              <label>
-                  <span>Keyword:</span>
-                  <input type="text" name="keyword">
-              </label>
+            <div class="search-radio">
+                <span>Title</span>
+              <input type="radio" name="title"/>
+            </div>
+              <div class="search-radio">
+                  <span>Author</span>
+                  <input type="radio" name="author">
+              </div>
           </fieldset>
-          <button>
-              Search The Library
+          <button class="search-library-button">
+              Search the Google Books API
           </button>
       </form>
+    </div>
         
         <script src="" async defer></script>
     </body>

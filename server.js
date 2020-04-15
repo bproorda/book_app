@@ -43,18 +43,23 @@ function bookHandler(request, response) {
     qString = `${qString}inauthor:${request.body.searchinput}`;
   }
   const url = 'https://www.googleapis.com/books/v1/volumes?';
-  // let qUrl = url + qString;
-  console.log(`The search query is ${qString}`);
   superagent.get(url)
   .query({
     q: qString
   })
   .then(bookResponse => {
-    let bookData = JSON.parse(bookResponse.text.items);
-    console.log(bookData);
-  }
-   
-    );
+    let bookData = JSON.parse(bookResponse.text);
+    // console.log(bookData.items[0].volumeInfo.title);
+    let books = bookData.items.map(thisBook => {
+      return new Book(thisBook);
+    })
+    
+  }).catch(err =>
+      errorHandler(err, response));
+}
+
+function Book(bookInfo) {
+  this.title = bookInfo.volumeInfo.title;
 }
 
 // client.connect()

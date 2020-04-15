@@ -49,7 +49,7 @@ function bookHandler(request, response) {
     })
     .then(bookResponse => {
       let bookData = JSON.parse(bookResponse.text);
-      console.log(bookData.items[0].volumeInfo.title);
+      console.log(bookData.items[0].volumeInfo.industryIdentifiers[0].identifier);
       let books = bookData.items.map(thisBook => {
         return new Book(thisBook);
       });
@@ -63,6 +63,7 @@ function Book(bookInfo) {
   this.author = bookInfo.volumeInfo.authors;
   this.description = bookInfo.volumeInfo.description;
   this.image_url = bookInfo.volumeInfo.imageLinks.smallThumbnail;
+  this.isbn13 = bookInfo.volumeInfo.industryIdentifiers[0].identifier;
 }
 
 // client.connect()

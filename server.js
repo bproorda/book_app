@@ -62,7 +62,7 @@ function Book(bookInfo) {
   this.title = bookInfo.volumeInfo.title;
   this.author = bookInfo.volumeInfo.authors;
   this.description = bookInfo.volumeInfo.description;
-  this.image_url = bookInfo.volumeInfo.imageLinks.smallThumbnail;
+  this.image_url = bookInfo.volumeInfo.imageLinks.smallThumbnail.replace('http://', 'https://');
   this.isbn13 = bookInfo.volumeInfo.industryIdentifiers[0].identifier;
 }
 

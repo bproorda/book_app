@@ -53,7 +53,6 @@ function bookHandler(request, response) {
     let books = bookData.items.map(thisBook => {
       return new Book(thisBook);
     })
-    
   }).catch(err =>
       errorHandler(err, response));
 }

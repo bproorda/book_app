@@ -49,7 +49,7 @@ function bookHandler(request, response) {
     })
     .then(bookResponse => {
       let bookData = JSON.parse(bookResponse.text);
-      console.log(bookData.items[0].volumeInfo.industryIdentifiers[0].identifier);
+      console.log(bookData.items[0].volumeInfo.imageLinks.smallThumbnail);
       let books = bookData.items.map(thisBook => {
         return new Book(thisBook);
       });

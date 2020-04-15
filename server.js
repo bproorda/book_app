@@ -5,6 +5,8 @@ require('dotenv').config();
 const express = require('express');
 const superagent = require('superagent');
 const pg = require('pg');
+// const methodOverride = require('method-override');
+
 
 if (!process.env.DATABASE_URL) {
   throw 'DATABASE_URL is missing!';
@@ -16,7 +18,9 @@ const app = express();
 app.set('view engine', 'ejs');
 
 app.use(express.static('./public'));
+// app.use(express.json()); // JSON body parser
 app.use(express.urlencoded({ extended: true }));
+// app.use(methodOverride('_method'));
 
 // Routes
 app.get('/', (request, response) => {
@@ -33,7 +37,11 @@ app.post('/searches', (request, response) => {
   // response.render('pages/searches/searches', {message1: 'The Library is closed due to PLAGUE!!!'});
 });
 
+// app.get('/detail', (request, response) => {
+//   response.render('pages/books/detail');
+// });
 
+// app.delete('/detail/:book_id', deleteBook);
 
 app.get('*', (req, res) => res.status(404).send('this route does not exist'));
 
@@ -81,6 +89,11 @@ function parseBookImage(imageLinks) {
 
   return imageLinks.thumbnail || placeholderImage;
 }
+
+// function deleteBook(request, response) {
+//   response.redirect('/');
+// }
+
 
 client.connect()
   .then(() => {

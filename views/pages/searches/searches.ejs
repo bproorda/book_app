@@ -13,8 +13,7 @@
         </div>
         <div>
             <% data.forEach(book => { %>
-                <% let imageSource =  book.image_url ? book.image_url : "https://i.imgur.com/J5LVHEL.jpg" %>
-            <img src="<%= imageSource %>" />
+            <img src="<%= book.image_url %>" />
             <h2> <%= book.title %> </h2>
             <h3><%= book.author %></h3>
             <p><%= book.description %></p>

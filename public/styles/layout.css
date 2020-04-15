@@ -1,7 +1,11 @@
 /* layout.css */
 
 header {
-    padding-left: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-left: 15px;
+    padding-right: 15px;
     background-color: black;
     color: white;
     height: 7%;
@@ -9,9 +13,7 @@ header {
 }
 
 h1 {
-    position: relative;
-    top: 50%;
-    transform: translateY(-50%);
+
 }
 
 .search-heading {

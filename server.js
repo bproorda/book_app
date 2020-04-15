@@ -30,7 +30,7 @@ app.get('/show', (request, response) => {
 app.post('/searches', (request, response) => {
   console.log('/searches', request.body);
   bookHandler(request, response);
-  response.render('pages/searches/searches', {message1: 'The Library is closed due to PLAGUE!!!'});
+  // response.render('pages/searches/searches', {message1: 'The Library is closed due to PLAGUE!!!'});
 });
 
 app.get('*', (req, res) => res.status(404).send('this route does not exist'));
@@ -42,18 +42,19 @@ function bookHandler(request, response) {
   }else if (request.body.author === 'on') {
     qString = `${qString}inauthor:${request.body.searchinput}`;
   }
-  const url = 'https://www.googleapis.com/books/v1/volumes?';
+  const url = 'https://www.googleapis.com/books/v1/volumes';
   superagent.get(url)
-  .query({
-    q: qString
-  })
-  .then(bookResponse => {
-    let bookData = JSON.parse(bookResponse.text);
-    // console.log(bookData.items[0].volumeInfo.title);
-    let books = bookData.items.map(thisBook => {
-      return new Book(thisBook);
+    .query({
+      q: qString
     })
-  }).catch(err =>
+    .then(bookResponse => {
+      let bookData = JSON.parse(bookResponse.text);
+      console.log(bookData.items[0].volumeInfo.title);
+      let books = bookData.items.map(thisBook => {
+        return new Book(thisBook);
+      });
+      response.render('pages/searches/searches', { data: books } );
+    }).catch(err =>
       errorHandler(err, response));
 }
 

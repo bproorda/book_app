@@ -62,8 +62,8 @@ function Book(bookInfo) {
   this.title = bookInfo.volumeInfo.title;
   this.author = bookInfo.volumeInfo.authors;
   this.description = bookInfo.volumeInfo.description;
-  this.image_url = (bookInfo.volumeInfo.imageLinks ? bookInfo.volumeInfo.imageLinks.smallThumbnail.replace('http://', 'https://') :"https://i.imgur.com/J5LVHEL.jpg" );
-  this.isbn13 = bookInfo.volumeInfo.industryIdentifiers[0].identifier;
+  this.image_url = (bookInfo.volumeInfo.imageLinks  ? bookInfo.volumeInfo.imageLinks.smallThumbnail.replace('http://', 'https://') :"https://i.imgur.com/J5LVHEL.jpg" );
+  this.isbn13 = (bookInfo.volumeInfo.industryIdentifiers ?  bookInfo.volumeInfo.industryIdentifiers[0].identifier : 'Not Found');
 }
 
 client.connect()

@@ -4,13 +4,13 @@ require('dotenv').config();
 
 const express = require('express');
 const superagent = require('superagent');
-// const pg = require('pg');
+const pg = require('pg');
 
-// if (!process.env.DATABASE_URL) {
-//   throw 'DATABASE_URL is missing!';
-// }
-// const client = new pg.Client(process.env.DATABASE_URL);
-// client.on('error', err => { throw err; });
+if (!process.env.DATABASE_URL) {
+  throw 'DATABASE_URL is missing!';
+}
+const client = new pg.Client(process.env.DATABASE_URL);
+client.on('error', err => { throw err; });
 
 const app = express();
 app.set('view engine', 'ejs');
@@ -66,19 +66,19 @@ function Book(bookInfo) {
   this.isbn13 = bookInfo.volumeInfo.industryIdentifiers[0].identifier;
 }
 
-// client.connect()
-//   .then(() => {
-//     console.log('PG Connected!');
+client.connect()
+  .then(() => {
+    console.log('PG Connected!');
 
-//     app.listen(PORT, () => console.log(`App is listening on ${PORT}`));
-//   })
-//   .catch(err => { throw err; });
+    app.listen(PORT, () => console.log(`App is listening on ${PORT}`));
+  })
+  .catch(err => { throw err; });
 
 const cors = require('cors');
 app.use(cors());
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`http://localhost:${PORT}`));
+// app.listen(PORT, () => console.log(`http://localhost:${PORT}`));
 
 function errorHandler(err, response) {
   let viewModel = {

@@ -33,6 +33,8 @@ app.post('/searches', (request, response) => {
   // response.render('pages/searches/searches', {message1: 'The Library is closed due to PLAGUE!!!'});
 });
 
+
+
 app.get('*', (req, res) => res.status(404).send('this route does not exist'));
 
 function bookHandler(request, response) {
@@ -62,8 +64,22 @@ function Book(bookInfo) {
   this.title = bookInfo.volumeInfo.title;
   this.author = bookInfo.volumeInfo.authors;
   this.description = bookInfo.volumeInfo.description;
-  this.image_url = (bookInfo.volumeInfo.imageLinks  ? bookInfo.volumeInfo.imageLinks.smallThumbnail.replace('http://', 'https://') :"https://i.imgur.com/J5LVHEL.jpg" );
-  this.isbn13 = (bookInfo.volumeInfo.industryIdentifiers ?  bookInfo.volumeInfo.industryIdentifiers[0].identifier : 'Not Found');
+  this.image_url = parseBookImage(bookInfo.volumeInfo.imageLinks);
+  this.isbn13 = (bookInfo.volumeInfo.industryIdentifiers ? bookInfo.volumeInfo.industryIdentifiers.identifier : 'Not Found');
+}
+
+const placeholderImage = 'https://i.imgur.com/J5LVHEL.jpg';
+function parseBookImage(imageLinks) {
+  console.log(imageLinks);
+  if (!imageLinks) {
+    return placeholderImage;
+  }
+
+  if (imageLinks.thumbnail) {
+    return imageLinks.thumbnail.replace('http:', 'https:');
+  }
+
+  return imageLinks.thumbnail || placeholderImage;
 }
 
 client.connect()

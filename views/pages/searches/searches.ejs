@@ -1,18 +1,25 @@
 <!DOCTYPE html>
 
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>Search Results</title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="">
-    </head>
-    <body>
-       <% data.forEach(book => { %>
-        <h1> <%= book.title %> </h1>
-       <% }) %>
-        
-        <script src="" async defer></script>
-    </body>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Search Results</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="">
+</head>
+
+<body>
+    <% data.forEach(book => { %>
+        <% let imageSource =  book.image_url ? book.image_url : "https://i.imgur.com/J5LVHEL.jpg" %>
+    <img src="<%= imageSource %>" />
+    <h2> <%= book.title %> </h2>
+    <h3><%= book.author %></h3>
+    <p><%= book.description %></p>
+    <p>ISBN13: <%= book.isbn13 %></p>
+    <% }) %>
+
+    <script src="" async defer></script>
+</body>
+
 </html>

@@ -3,6 +3,7 @@
 require('dotenv').config();
 
 const express = require('express');
+const superagent = require('superagent');
 // const pg = require('pg');
 
 // if (!process.env.DATABASE_URL) {
@@ -28,10 +29,33 @@ app.get('/show', (request, response) => {
 
 app.post('/searches', (request, response) => {
   console.log('/searches', request.body);
-  response.render('pages/searches/searches');
+  bookHandler(request, response);
+  response.render('pages/searches/searches', {message1: 'The Library is closed due to PLAGUE!!!'});
 });
 
 app.get('*', (req, res) => res.status(404).send('this route does not exist'));
+
+function bookHandler(request, response) {
+  let qString = '+';
+  if(request.body.title === 'on') {
+    qString = `${qString}intitle:${request.body.searchinput}`;
+  }else if (request.body.author === 'on') {
+    qString = `${qString}inauthor:${request.body.searchinput}`;
+  }
+  const url = 'https://www.googleapis.com/books/v1/volumes?';
+  // let qUrl = url + qString;
+  console.log(`The search query is ${qString}`);
+  superagent.get(url)
+  .query({
+    q: qString
+  })
+  .then(bookResponse => {
+    let bookData = JSON.parse(bookResponse.text.items);
+    console.log(bookData);
+  }
+   
+    );
+}
 
 // client.connect()
 //   .then(() => {

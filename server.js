@@ -60,6 +60,9 @@ function bookHandler(request, response) {
 
 function Book(bookInfo) {
   this.title = bookInfo.volumeInfo.title;
+  this.author = bookInfo.volumeInfo.authors;
+  this.description = bookInfo.volumeInfo.description;
+  this.image_url = bookInfo.volumeInfo.imageLinks.smallThumbnail;
 }
 
 // client.connect()

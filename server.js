@@ -59,9 +59,12 @@ function bookHandler(request, response) {
     })
     .then(bookResponse => {
       let bookData = JSON.parse(bookResponse.text);
-      console.log(bookData.items[0].volumeInfo.imageLinks.smallThumbnail);
+      // console.log(bookData.items[0].volumeInfo.imageLinks.smallThumbnail);
       let books = bookData.items.map(thisBook => {
-        return new Book(thisBook);
+        let newBook = new Book(thisBook);
+        // setBookInDB(newBook);
+        console.log(newBook.title);
+        return newBook;
       });
       response.render('pages/searches/searches', { data: books } );
     }).catch(err =>
@@ -72,22 +75,8 @@ function Book(bookInfo) {
   this.title = bookInfo.volumeInfo.title;
   this.author = bookInfo.volumeInfo.authors;
   this.description = bookInfo.volumeInfo.description;
-  this.image_url = parseBookImage(bookInfo.volumeInfo.imageLinks);
-  this.isbn13 = (bookInfo.volumeInfo.industryIdentifiers ? bookInfo.volumeInfo.industryIdentifiers.identifier : 'Not Found');
-}
-
-const placeholderImage = 'https://i.imgur.com/J5LVHEL.jpg';
-function parseBookImage(imageLinks) {
-  console.log(imageLinks);
-  if (!imageLinks) {
-    return placeholderImage;
-  }
-
-  if (imageLinks.thumbnail) {
-    return imageLinks.thumbnail.replace('http:', 'https:');
-  }
-
-  return imageLinks.thumbnail || placeholderImage;
+  this.image_url = parseImageUrl(bookInfo.volumeInfo.imageLinks);
+  this.isbn13 = parseISBN(bookInfo.volumeInfo.industryIdentifiers);
 }
 
 // function deleteBook(request, response) {
@@ -115,4 +104,35 @@ function errorHandler(err, response) {
   };
   response.render('pages/error', viewModel);
 }
+const placeholder = "https://i.imgur.com/J5LVHEL.jpg";
+function parseImageUrl(imageLink) {
+  if (!imageLink) {
+    return placeholder;
+  } else {
+    let returnLink = imageLink.smallThumbnail.replace('http://', 'https://');
+    return returnLink;
+  }
+}
 
+function parseISBN(isbnLink) {
+  if(isbnLink) {
+    for(let i = 0; i < isbnLink.length; i++) {
+      if(isbnLink[i].type === 'ISBN_13') {
+        let thisIsbn = isbnLink[i].identifier;
+        return thisIsbn;
+      }
+    }
+  } else {
+    return 'Not Found';
+  }
+}
+
+function setBookInDB(newBook) {
+  const SQL = 'INSERT INTO books (author, title, isbn, image_url, description) VALUES ($1, $2, $3, $4, $5)';
+  const sqlParameters = [newBook.author, newBook.title, newBook.isbn13, newBook.image_url, newBook.description];
+  return client.query(SQL, sqlParameters).then(result => {
+    console.log('Book saved', result);
+  }).catch(err => {
+    console.log(err);
+  });
+}

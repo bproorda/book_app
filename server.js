@@ -51,7 +51,10 @@ function bookHandler(request, response) {
       let bookData = JSON.parse(bookResponse.text);
       // console.log(bookData.items[0].volumeInfo.imageLinks);
       let books = bookData.items.map(thisBook => {
-        return new Book(thisBook);
+        let newBook = new Book(thisBook);
+        // setBookInDB(newBook);
+        console.log(newBook.title);
+        return newBook;
       });
       response.render('pages/searches/searches', { data: books } );
     }).catch(err =>
@@ -109,5 +112,15 @@ function parseISBN(isbnLink) {
   } else {
     return 'Not Found';
   }
+}
+
+function setBookInDB(newBook) {
+  const SQL = 'INSERT INTO books (author, title, isbn, image_url, description) VALUES ($1, $2, $3, $4, $5)';
+  const sqlParameters = [newBook.author, newBook.title, newBook.isbn13, newBook.image_url, newBook.description];
+  return client.query(SQL, sqlParameters).then(result => {
+    console.log('Book saved', result);
+  }).catch(err => {
+    console.log(err);
+  });
 }
 

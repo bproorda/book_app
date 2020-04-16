@@ -34,6 +34,12 @@ app.post('/searches', (request, response) => {
   // response.render('pages/searches/searches', {message1: 'The Library is closed due to PLAGUE!!!'});
 });
 
+app.post('/add', (request, response) => {
+addHandler(request, response);
+// response.render('pages/detail-view.ejs', {message1: request.body.title});
+});
+
+
 // app.get('/detail', (request, response) => {
 //   response.render('pages/books/detail');
 // });
@@ -56,7 +62,7 @@ function bookHandler(request, response) {
     })
     .then(bookResponse => {
       let bookData = JSON.parse(bookResponse.text);
-      setBookInDB(new Book(bookData.items[0]));
+      // setBookInDB(new Book(bookData.items[0]));
       let books = bookData.items.map(thisBook => {
         let newBook = new Book(thisBook);
         // setBookInDB(newBook);
@@ -74,6 +80,11 @@ function Book(bookInfo) {
   this.description = bookInfo.volumeInfo.description;
   this.image_url = parseImageUrl(bookInfo.volumeInfo.imageLinks);
   this.isbn13 = parseISBN(bookInfo.volumeInfo.industryIdentifiers);
+}
+
+function addHandler(request, response) {
+  setBookInDB(request.body);
+  response.render('pages/detail-view.ejs', {book: request.body})
 }
 
 // function deleteBook(request, response) {

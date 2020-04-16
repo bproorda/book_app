@@ -125,17 +125,24 @@ function parseISBN(isbnLink) {
 }
 
 function setBookInDB(newBook) {
-  const SQL = 'INSERT INTO books (author, title, isbn, image_url, description) VALUES ($1, $2, $3, $4, $5)';
-  const sqlParameters = [newBook.author, newBook.title, newBook.isbn13, newBook.image_url, newBook.description];
-  return client.query(SQL, sqlParameters).then(result => {
-    console.log('Book saved', result);
-  }).catch(err => {
-    console.log(err);
-  });
+  const searchSQL = 'SELECT * FROM books WHERE title = $1';
+  const searchParameter = [newBook.title];
+  client.query(searchSQL, searchParameter)
+    .then(searchResult => {
+      if(!searchResult.rowCount > 0) {
+        const SQL = 'INSERT INTO books (author, title, isbn, image_url, description) VALUES ($1, $2, $3, $4, $5)';
+        const sqlParameters = [newBook.author, newBook.title, newBook.isbn13, newBook.image_url, newBook.description];
+        client.query(SQL, sqlParameters).then(result => {
+          console.log('Book saved', result);
+        }).catch(err => {
+          console.log(err);
+        });
+      }
+    });
 }
 
 function getBooks(request, response) {
-  const SQL = 'SELECT * FROM Books;';
+  const SQL = 'SELECT * FROM books;';
 
   client.query(SQL)
     .then(results => {

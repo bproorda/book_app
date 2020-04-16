@@ -24,12 +24,12 @@ app.use(express.urlencoded({ extended: true }));
 // Routes
 app.get('/', getBooks);
 
-app.get('/show', (request, response) => {
-  response.render('pages/searches/show');
+app.get('/search', (request, response) => {
+  response.render('pages/searches/search');
 });
 
-app.post('/searches', (request, response) => {
-  console.log('/searches', request.body);
+app.post('/show', (request, response) => {
+  console.log('/show', request.body);
   bookHandler(request, response);
   // response.render('pages/searches/searches', {message1: 'The Library is closed due to PLAGUE!!!'});
 });
@@ -69,7 +69,7 @@ function bookHandler(request, response) {
         console.log(newBook.title);
         return newBook;
       });
-      response.render('pages/searches/searches', { data: books } );
+      response.render('pages/searches/show', { data: books } );
     }).catch(err =>
       errorHandler(err, response));
 }

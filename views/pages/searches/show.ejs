@@ -1,37 +1,36 @@
-<!-- show.ejs -->
 <!DOCTYPE html>
-<html lang="en">
+<html>
     <head>
         <%- include('../../layout/head') %>
     </head>
     <body>
-    <header>
-        <%- include('../../layout/header') %>
-    </header>
+        <header>
+            <%- include('../../layout/header') %>
+        </header>
     <div class="wrapper">
         <div class="search-heading">
-            <h2>Search by Title or Author</h2>
+            <h2>Search Results</h2>
         </div>
-      <form action="/searches" method="POST">
-          <fieldset>
-              <label>
-              <input class ="inputfield" type="text" name="searchinput" placeholder="Enter a title or author" />
-            </label>
-            <div class="search-radio">
-                <span>Title</span>
-              <input type="radio" name="title"/>
-            </div>
-              <div class="search-radio">
-                  <span>Author</span>
-                  <input type="radio" name="author">
-              </div>
-          </fieldset>
-          <button class="search-library-button">
-              Search the Google Books API
-          </button>
-      </form>
+        <div>
+            <% data.forEach(book => { %>
+                <% let imageSource =  book.image_url ? book.image_url : "https://i.imgur.com/J5LVHEL.jpg" %>
+            <img src="<%= imageSource %>" />
+            <h2> <%= book.title %> </h2>
+            <h3><%= book.author %></h3>
+            <!-- <p><%= book.description %></p> -->
+            <!-- <p>ISBN13: <%= book.isbn13 %></p> -->
+            <form action="/add" method="POST">
+                <input type="hidden" name="title"   value='<%= book.title %>' />
+                <input type="hidden" name="author" value='<%= book.author %>' />
+                <input type="hidden"  name="description" value='<%= book.description %>'/>
+                <input type="hidden" name="isbn13" value='<%= book.isbn13 %>'/>
+                <input type="hidden"  name="imageSource" value="<%= imageSource %>" />
+                <button type="submit" class="add-to-booklist">Add to BookList</button>
+            </form>
+            
+            <% }) %>
+        </div>
     </div>
-        
         <script src="" async defer></script>
     </body>
 </html>

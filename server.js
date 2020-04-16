@@ -5,6 +5,8 @@ require('dotenv').config();
 const express = require('express');
 const superagent = require('superagent');
 const pg = require('pg');
+// const methodOverride = require('method-override');
+
 
 if (!process.env.DATABASE_URL) {
   throw 'DATABASE_URL is missing!';
@@ -16,7 +18,9 @@ const app = express();
 app.set('view engine', 'ejs');
 
 app.use(express.static('./public'));
+// app.use(express.json()); // JSON body parser
 app.use(express.urlencoded({ extended: true }));
+// app.use(methodOverride('_method'));
 
 // Routes
 app.get('/', (request, response) => {
@@ -32,6 +36,12 @@ app.post('/searches', (request, response) => {
   bookHandler(request, response);
   // response.render('pages/searches/searches', {message1: 'The Library is closed due to PLAGUE!!!'});
 });
+
+// app.get('/detail', (request, response) => {
+//   response.render('pages/books/detail');
+// });
+
+// app.delete('/detail/:book_id', deleteBook);
 
 app.get('*', (req, res) => res.status(404).send('this route does not exist'));
 
@@ -49,9 +59,12 @@ function bookHandler(request, response) {
     })
     .then(bookResponse => {
       let bookData = JSON.parse(bookResponse.text);
-      console.log(bookData.items[0].volumeInfo.imageLinks.smallThumbnail);
+      // console.log(bookData.items[0].volumeInfo.imageLinks.smallThumbnail);
       let books = bookData.items.map(thisBook => {
-        return new Book(thisBook);
+        let newBook = new Book(thisBook);
+        // setBookInDB(newBook);
+        console.log(newBook.title);
+        return newBook;
       });
       response.render('pages/searches/searches', { data: books } );
     }).catch(err =>
@@ -62,9 +75,14 @@ function Book(bookInfo) {
   this.title = bookInfo.volumeInfo.title;
   this.author = bookInfo.volumeInfo.authors;
   this.description = bookInfo.volumeInfo.description;
-  this.image_url = (bookInfo.volumeInfo.imageLinks  ? bookInfo.volumeInfo.imageLinks.smallThumbnail.replace('http://', 'https://') :"https://i.imgur.com/J5LVHEL.jpg" );
-  this.isbn13 = (bookInfo.volumeInfo.industryIdentifiers ?  bookInfo.volumeInfo.industryIdentifiers[0].identifier : 'Not Found');
+  this.image_url = parseImageUrl(bookInfo.volumeInfo.imageLinks);
+  this.isbn13 = parseISBN(bookInfo.volumeInfo.industryIdentifiers);
 }
+
+// function deleteBook(request, response) {
+//   response.redirect('/');
+// }
+
 
 client.connect()
   .then(() => {
@@ -86,4 +104,35 @@ function errorHandler(err, response) {
   };
   response.render('pages/error', viewModel);
 }
+const placeholder = "https://i.imgur.com/J5LVHEL.jpg";
+function parseImageUrl(imageLink) {
+  if (!imageLink) {
+    return placeholder;
+  } else {
+    let returnLink = imageLink.smallThumbnail.replace('http://', 'https://');
+    return returnLink;
+  }
+}
 
+function parseISBN(isbnLink) {
+  if(isbnLink) {
+    for(let i = 0; i < isbnLink.length; i++) {
+      if(isbnLink[i].type === 'ISBN_13') {
+        let thisIsbn = isbnLink[i].identifier;
+        return thisIsbn;
+      }
+    }
+  } else {
+    return 'Not Found';
+  }
+}
+
+function setBookInDB(newBook) {
+  const SQL = 'INSERT INTO books (author, title, isbn, image_url, description) VALUES ($1, $2, $3, $4, $5)';
+  const sqlParameters = [newBook.author, newBook.title, newBook.isbn13, newBook.image_url, newBook.description];
+  return client.query(SQL, sqlParameters).then(result => {
+    console.log('Book saved', result);
+  }).catch(err => {
+    console.log(err);
+  });
+}

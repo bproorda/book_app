@@ -59,7 +59,7 @@ function bookHandler(request, response) {
     })
     .then(bookResponse => {
       let bookData = JSON.parse(bookResponse.text);
-      // console.log(bookData.items[0].volumeInfo.imageLinks.smallThumbnail);
+      setBookInDB(new Book(bookData.items[0]));
       let books = bookData.items.map(thisBook => {
         let newBook = new Book(thisBook);
         // setBookInDB(newBook);

@@ -49,7 +49,7 @@ function bookHandler(request, response) {
     })
     .then(bookResponse => {
       let bookData = JSON.parse(bookResponse.text);
-      console.log(bookData.items[0].volumeInfo.imageLinks.smallThumbnail);
+      // console.log(bookData.items[0].volumeInfo.imageLinks);
       let books = bookData.items.map(thisBook => {
         return new Book(thisBook);
       });
@@ -62,7 +62,7 @@ function Book(bookInfo) {
   this.title = bookInfo.volumeInfo.title;
   this.author = bookInfo.volumeInfo.authors;
   this.description = bookInfo.volumeInfo.description;
-  this.image_url = (bookInfo.volumeInfo.imageLinks  ? bookInfo.volumeInfo.imageLinks.smallThumbnail.replace('http://', 'https://') :"https://i.imgur.com/J5LVHEL.jpg" );
+  this.image_url = parseImageUrl(bookInfo.volumeInfo.imageLinks);
   this.isbn13 = (bookInfo.volumeInfo.industryIdentifiers ?  bookInfo.volumeInfo.industryIdentifiers[0].identifier : 'Not Found');
 }
 
@@ -70,7 +70,7 @@ client.connect()
   .then(() => {
     console.log('PG Connected!');
 
-    app.listen(PORT, () => console.log(`App is listening on ${PORT}`));
+    app.listen(PORT, () => console.log(`http://localhost:${PORT}`));
   })
   .catch(err => { throw err; });
 
@@ -80,10 +80,21 @@ app.use(cors());
 const PORT = process.env.PORT || 3000;
 // app.listen(PORT, () => console.log(`http://localhost:${PORT}`));
 
+
+// Functions to be possibly modularized later
 function errorHandler(err, response) {
   let viewModel = {
     error: err,
   };
   response.render('pages/error', viewModel);
+}
+const placeholder = "https://i.imgur.com/J5LVHEL.jpg";
+function parseImageUrl(imageLink) {
+  if (!imageLink) {
+    return placeholder;
+  } else {
+    let returnLink = imageLink.smallThumbnail.replace('http://', 'https://');
+    return returnLink;
+  }
 }
 

@@ -138,12 +138,12 @@ function parseISBN(isbnLink) {
 function setBookInDB(newBook) {
   const searchSQL = 'SELECT * FROM books WHERE title = $1';
   const searchParameter = [newBook.title];
- return client.query(searchSQL, searchParameter)
+  return client.query(searchSQL, searchParameter)
     .then(searchResult => {
-      if(!searchResult.rowCount > 0) {
+      if(searchResult.rowCount === 0) {
         const SQL = 'INSERT INTO books (author, title, isbn, image_url, description) VALUES ($1, $2, $3, $4, $5)';
         const sqlParameters = [newBook.author, newBook.title, newBook.isbn13, newBook.image_url, newBook.description];
-      return client.query(SQL, sqlParameters).then(result => {
+        return client.query(SQL, sqlParameters).then(result => {
           console.log('Book saved', result);
         }).catch(err => {
           console.log(err);

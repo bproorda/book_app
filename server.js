@@ -63,7 +63,7 @@ function Book(bookInfo) {
   this.author = bookInfo.volumeInfo.authors;
   this.description = bookInfo.volumeInfo.description;
   this.image_url = parseImageUrl(bookInfo.volumeInfo.imageLinks);
-  this.isbn13 = (bookInfo.volumeInfo.industryIdentifiers ?  bookInfo.volumeInfo.industryIdentifiers[0].identifier : 'Not Found');
+  this.isbn13 = parseISBN(bookInfo.volumeInfo.industryIdentifiers);
 }
 
 client.connect()
@@ -95,6 +95,19 @@ function parseImageUrl(imageLink) {
   } else {
     let returnLink = imageLink.smallThumbnail.replace('http://', 'https://');
     return returnLink;
+  }
+}
+
+function parseISBN(isbnLink) {
+  if(isbnLink) {
+    for(let i = 0; i < isbnLink.length; i++) {
+      if(isbnLink[i].type === 'ISBN_13') {
+        let thisIsbn = isbnLink[i].identifier;
+        return thisIsbn;
+      }
+    }
+  } else {
+    return 'Not Found';
   }
 }
 

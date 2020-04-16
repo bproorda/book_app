@@ -1,0 +1,37 @@
+<!-- show.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <%- include('../../layout/head') %>
+    </head>
+    <body>
+    <header>
+        <%- include('../../layout/header') %>
+    </header>
+    <div class="wrapper">
+        <div class="search-heading">
+            <h2>Search by Title or Author</h2>
+        </div>
+      <form action="/show" method="POST">
+          <fieldset>
+              <label>
+              <input class ="inputfield" type="text" name="searchinput" placeholder="Enter a title or author" />
+            </label>
+            <div class="search-radio">
+                <span>Title</span>
+              <input type="radio" name="title"/>
+            </div>
+              <div class="search-radio">
+                  <span>Author</span>
+                  <input type="radio" name="author">
+              </div>
+          </fieldset>
+          <button class="search-library-button">
+              Search the Google Books API
+          </button>
+      </form>
+    </div>
+        
+        <script src="" async defer></script>
+    </body>
+</html>

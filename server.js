@@ -24,18 +24,18 @@ app.use(express.urlencoded({ extended: true }));
 // Routes
 app.get('/', getBooks);
 
-app.get('/show', (request, response) => {
-  response.render('pages/searches/show');
+app.get('/search', (request, response) => {
+  response.render('pages/searches/search');
 });
 
-app.post('/searches', (request, response) => {
-  console.log('/searches', request.body);
+app.post('/show', (request, response) => {
+  console.log('/show', request.body);
   bookHandler(request, response);
   // response.render('pages/searches/searches', {message1: 'The Library is closed due to PLAGUE!!!'});
 });
 
 app.post('/add', (request, response) => {
-addHandler(request, response);
+  addHandler(request, response);
 // response.render('pages/detail-view.ejs', {message1: request.body.title});
 });
 
@@ -69,7 +69,7 @@ function bookHandler(request, response) {
         console.log(newBook.title);
         return newBook;
       });
-      response.render('pages/searches/searches', { data: books } );
+      response.render('pages/searches/show', { data: books } );
     }).catch(err =>
       errorHandler(err, response));
 }
@@ -84,7 +84,7 @@ function Book(bookInfo) {
 
 function addHandler(request, response) {
   let idNumb = setBookInDB(request.body);
-  response.render('pages/detail-view.ejs', {book: request.body, idNumb})
+  response.render('pages/detail-view.ejs', {book: request.body, idNumb});
 }
 
 // function deleteBook(request, response) {
@@ -138,12 +138,12 @@ function parseISBN(isbnLink) {
 function setBookInDB(newBook) {
   const searchSQL = 'SELECT * FROM books WHERE title = $1';
   const searchParameter = [newBook.title];
- return client.query(searchSQL, searchParameter)
+  return client.query(searchSQL, searchParameter)
     .then(searchResult => {
-      if(!searchResult.rowCount > 0) {
-        const SQL = 'INSERT INTO books (author, title, isbn, image_url, description) OUTPUT Inserted.ID VALUES ($1, $2, $3, $4, $5)';
+      if(searchResult.rowCount === 0) {
+        const SQL = 'INSERT INTO books (author, title, isbn, image_url, description) VALUES ($1, $2, $3, $4, $5)';
         const sqlParameters = [newBook.author, newBook.title, newBook.isbn13, newBook.image_url, newBook.description];
-      return client.query(SQL, sqlParameters).then(result => {
+        return client.query(SQL, sqlParameters).then(result => {
           console.log('Book saved', result);
         }).catch(err => {
           console.log(err);

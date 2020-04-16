@@ -18,14 +18,11 @@ const app = express();
 app.set('view engine', 'ejs');
 
 app.use(express.static('./public'));
-// app.use(express.json()); // JSON body parser
 app.use(express.urlencoded({ extended: true }));
 // app.use(methodOverride('_method'));
 
 // Routes
-app.get('/', (request, response) => {
-  response.render('pages/index');
-});
+app.get('/', getBooks);
 
 app.get('/show', (request, response) => {
   response.render('pages/searches/show');
@@ -59,7 +56,7 @@ function bookHandler(request, response) {
     })
     .then(bookResponse => {
       let bookData = JSON.parse(bookResponse.text);
-      // console.log(bookData.items[0].volumeInfo.imageLinks.smallThumbnail);
+      setBookInDB(new Book(bookData.items[0]));
       let books = bookData.items.map(thisBook => {
         let newBook = new Book(thisBook);
         // setBookInDB(newBook);
@@ -128,11 +125,35 @@ function parseISBN(isbnLink) {
 }
 
 function setBookInDB(newBook) {
-  const SQL = 'INSERT INTO books (author, title, isbn, image_url, description) VALUES ($1, $2, $3, $4, $5)';
-  const sqlParameters = [newBook.author, newBook.title, newBook.isbn13, newBook.image_url, newBook.description];
-  return client.query(SQL, sqlParameters).then(result => {
-    console.log('Book saved', result);
-  }).catch(err => {
-    console.log(err);
-  });
+  const searchSQL = 'SELECT * FROM books WHERE title = $1';
+  const searchParameter = [newBook.title];
+  client.query(searchSQL, searchParameter)
+    .then(searchResult => {
+      if(!searchResult.rowCount > 0) {
+        const SQL = 'INSERT INTO books (author, title, isbn, image_url, description) VALUES ($1, $2, $3, $4, $5)';
+        const sqlParameters = [newBook.author, newBook.title, newBook.isbn13, newBook.image_url, newBook.description];
+        client.query(SQL, sqlParameters).then(result => {
+          console.log('Book saved', result);
+        }).catch(err => {
+          console.log(err);
+        });
+      }
+    });
+}
+
+function getBooks(request, response) {
+  const SQL = 'SELECT * FROM books;';
+
+  client.query(SQL)
+    .then(results => {
+      const { rowCount, rows } = results;
+      console.log(rows);
+
+      response.render('pages/index', {
+        books: rows
+      });
+    })
+    .catch(err => {
+      console.log(err);
+    });
 }

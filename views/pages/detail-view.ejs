@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <%- include('./../layout/head') %>
+    </head>
+    <body>
+        <header>
+            <%- include('./../layout/header') %>
+        </header>
+    <div class="wrapper">
+        <div class="search-heading">
+            <h2>Search Results</h2>
+        </div>
+        <div>
+            <img src="<%= book.imageSource %>" />
+            <h2> <%= book.title %> </h2>
+            <h3><%= book.author %></h3>
+            <p><%= book.description %></p>
+            <p>ISBN13: <%= book.isbn13 %></p>
+            <p>ID#: <%= book.idNumb %></p>
+        </div>
+    </div>
+        <script src="" async defer></script>
+    </body>
+</html>

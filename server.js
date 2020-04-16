@@ -18,14 +18,11 @@ const app = express();
 app.set('view engine', 'ejs');
 
 app.use(express.static('./public'));
-// app.use(express.json()); // JSON body parser
 app.use(express.urlencoded({ extended: true }));
 // app.use(methodOverride('_method'));
 
 // Routes
-app.get('/', (request, response) => {
-  response.render('pages/index');
-});
+app.get('/', getBooks);
 
 app.get('/show', (request, response) => {
   response.render('pages/searches/show');
@@ -135,4 +132,21 @@ function setBookInDB(newBook) {
   }).catch(err => {
     console.log(err);
   });
+}
+
+function getBooks(request, response) {
+  const SQL = 'SELECT * FROM Books;';
+
+  client.query(SQL)
+    .then(results => {
+      const { rowCount, rows } = results;
+      console.log(rows);
+
+      response.render('pages/index', {
+        books: rows
+      });
+    })
+    .catch(err => {
+      console.log(err);
+    });
 }

@@ -11,7 +11,15 @@
         <div class="search-heading">
             <h2>Home</h2>
         </div>
-       
+       <section class="book-view-container">
+           <ul>
+               <% books.forEach(book => { %>
+                  <li class="book-item">
+                     <h4>Book: <%= book.title %> </h4>
+                 </li>
+                 <% }) %>
+           </ul>
+       </section>
     </div>
         
         <script src="" async defer></script>

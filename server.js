@@ -83,8 +83,8 @@ function Book(bookInfo) {
 }
 
 function addHandler(request, response) {
-  setBookInDB(request.body);
-  response.render('pages/detail-view.ejs', {book: request.body})
+  let idNumb = setBookInDB(request.body);
+  response.render('pages/detail-view.ejs', {book: request.body, idNumb})
 }
 
 // function deleteBook(request, response) {
@@ -138,12 +138,12 @@ function parseISBN(isbnLink) {
 function setBookInDB(newBook) {
   const searchSQL = 'SELECT * FROM books WHERE title = $1';
   const searchParameter = [newBook.title];
-  client.query(searchSQL, searchParameter)
+ return client.query(searchSQL, searchParameter)
     .then(searchResult => {
       if(!searchResult.rowCount > 0) {
-        const SQL = 'INSERT INTO books (author, title, isbn, image_url, description) VALUES ($1, $2, $3, $4, $5)';
+        const SQL = 'INSERT INTO books (author, title, isbn, image_url, description) OUTPUT Inserted.ID VALUES ($1, $2, $3, $4, $5)';
         const sqlParameters = [newBook.author, newBook.title, newBook.isbn13, newBook.image_url, newBook.description];
-        client.query(SQL, sqlParameters).then(result => {
+      return client.query(SQL, sqlParameters).then(result => {
           console.log('Book saved', result);
         }).catch(err => {
           console.log(err);

@@ -40,16 +40,17 @@ app.post('/add', (request, response) => {
 app.get('/pages/books/:id', (request, response) => {
   getThatBook(request, response);
 });
-app.delete('/pages/books/:id', deleteThisTask); 
+app.delete('/pages/books/:id', deleteThisBook);
+app.get('/pages/books/:id/edit', updateThisBook)
 
 
 app.get('*', (req, res) => res.status(404).send('this route does not exist'));
 
 function bookHandler(request, response) {
   let qString = '+';
-  if(request.body.title === 'on') {
+  if (request.body.title === 'on') {
     qString = `${qString}intitle:${request.body.searchinput}`;
-  }else if (request.body.author === 'on') {
+  } else if (request.body.author === 'on') {
     qString = `${qString}inauthor:${request.body.searchinput}`;
   }
   const url = 'https://www.googleapis.com/books/v1/volumes';
@@ -63,7 +64,7 @@ function bookHandler(request, response) {
         let newBook = new Book(thisBook);
         return newBook;
       });
-      response.render('pages/searches/show', { data: books } );
+      response.render('pages/searches/show', { data: books });
     }).catch(err =>
       errorHandler(err, response));
 }
@@ -82,24 +83,37 @@ function getThatBook(request, response) {
   let SQLparam = [id];
   const SQL = ` SELECT * FROM books WHERE id = $1`;
   client.query(SQL, [id])
-  .then(results => {
-    const { rows } = results;
-    response.render('pages/detail-view.ejs', {book: rows[0]})
-  }) .catch(err => {
-    console.log(err);
-  });
-  
+    .then(results => {
+      const { rows } = results;
+      response.render('pages/detail-view.ejs', { book: rows[0] })
+    }).catch(err => {
+      console.log(err);
+    });
+
 }
 
-function deleteThisTask(request, response) {
+function deleteThisBook(request, response) {
   const SQL = 'DELETE FROM books WHERE id = $1';
   let id = request.param('id');
   client.query(SQL, [id])
-  .then(() => {
-    response.redirect('/');
-  }).catch(err => {
-    console.log(err)
-  });
+    .then(() => {
+      response.redirect('/');
+    }).catch(err => {
+      console.log(err)
+    });
+}
+function updateThisBook(request, response) {
+  let id = request.params.id;
+  console.log(`Search DB for book with id = ${id}`);
+  let SQL = 'SELECT * FROM books WHERE id = $1';
+  client.query(SQL, [id])
+  .then(results => {
+    const book = results.rows[0];
+    console.log(book.author);
+    const viewModel = { book };
+    response.render('pages/edit-view.ejs', viewModel);
+  })
+
 }
 
 
@@ -136,9 +150,9 @@ function parseImageUrl(imageLink) {
 }
 
 function parseISBN(isbnLink) {
-  if(isbnLink) {
-    for(let i = 0; i < isbnLink.length; i++) {
-      if(isbnLink[i].type === 'ISBN_13') {
+  if (isbnLink) {
+    for (let i = 0; i < isbnLink.length; i++) {
+      if (isbnLink[i].type === 'ISBN_13') {
         let thisIsbn = isbnLink[i].identifier;
         return thisIsbn;
       }
@@ -155,7 +169,7 @@ function setBookInDB(request, response) {
   const searchParameter = [newBook.title];
   return client.query(searchSQL, searchParameter)
     .then(searchResult => {
-      if(searchResult.rowCount === 0) {
+      if (searchResult.rowCount === 0) {
         const SQL = 'INSERT INTO books (author, title, isbn, image_url, description) VALUES ($1, $2, $3, $4, $5) Returning id';
         const sqlParameters = [newBook.author, newBook.title, newBook.isbn13, newBook.image_url, newBook.description];
         return client.query(SQL, sqlParameters).then(result => {
@@ -166,7 +180,7 @@ function setBookInDB(request, response) {
       } else {
         let id = searchResult.rows[0].id;
         console.log('book already saved!')
-          response.redirect(`/pages/books/${id}`);
+        response.redirect(`/pages/books/${id}`);
       }
     }).catch(err => { throw err; });
 }

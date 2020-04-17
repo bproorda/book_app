@@ -12,21 +12,29 @@ header {
 
 }
 
-h1 {
-
+.logo {
+    text-decoration: none;
+    color: white;
 }
 
 .search-heading {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
     height: 5%;
     background-color: darkgray;
+}
+
+.search-heading a {
+    text-decoration: none;
     color: white;
 }
 
 h2 {
-    position: relative;
-    top: 50%;
-    transform: translateY(-50%);
+    padding-top: 2.5%;
+    padding-bottom: 2.5%;
     text-align: center;
+    font-weight: bold;
 }
 
 form {
@@ -59,3 +67,44 @@ form {
     margin-bottom: 15px;
 }
 
+.book-view-container {
+    height: 95vh;
+    overflow: scroll;
+}
+
+.search-results-container {
+    height: 95vh;
+    overflow: scroll;
+}
+
+footer {
+    height: 5vh;
+    background-color: black;
+}
+
+.book-item {
+    border: 2px solid darkgray;
+    border-radius: 10px;
+    text-align: center;
+    margin-top: 5%;
+}
+
+.book-details {
+    height: 95vh;
+    overflow: scroll;
+    text-align: center;
+    margin-top: 5%;
+    padding-left: 5%;
+    padding-right: 5%;
+}
+
+.book-item-image {
+    margin-bottom: 5%;
+}
+
+.search-item {
+    border: 2px solid darkgray;
+    border-radius: 10px;
+    text-align: center;
+    margin-top: 5%;
+}

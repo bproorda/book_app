@@ -8,14 +8,18 @@
             <%- include('../layout/header') %>
         </header>
     <div class="wrapper">
-        <div class="search-heading">
-            <h2>Details</h2>
-        </div>
-        <div>
+        <ul class="search-heading">
+            <li><a href="/">Home</a></li>
+            <li><a href="/search">Search</a></li>
+    </ul>
+    <h2>Details</h2>
+        <div class="book-details">
             <img src="<%= book.image_url %>" />
             <h2> <%= book.title %> </h2>
             <h3><%= book.author %></h3>
+            <br>
             <p><%= book.description %></p>
+            <br>
             <p>ISBN13: <%= book.isbn %></p>
 
               <!-- method override -->

@@ -109,11 +109,9 @@ function updateThisBook(request, response) {
   client.query(SQL, [id])
   .then(results => {
     const book = results.rows[0];
-    console.log(book.author);
     const viewModel = { book };
     response.render('pages/edit-view.ejs', viewModel);
   })
-
 }
 
 

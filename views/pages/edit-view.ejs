@@ -1,30 +1,43 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <%- include('../layout/head') %>
-    </head>
-    <body>
-        <header>
-            <%- include('../layout/header') %>
-        </header>
+
+<head>
+    <%- include('../layout/head') %>
+</head>
+
+<body>
+    <header>
+        <%- include('../layout/header') %>
+    </header>
     <div class="wrapper">
         <div class="search-heading">
             <h2>Update Details</h2>
         </div>
         <div>
             <img src="<%= book.image_url %>" />
-            <h2> <%= book.title %> </h2>
-            <h3><%= book.author %></h3>
-            <p><%= book.description %></p>
-            <p>ISBN13: <%= book.isbn %></p>
+            <form id="updateForm" action="/pages/books/<%= book.id %>?_method=PUT" method="post">
+                <fieldset>
+                    <legend>Update the entries</legend>
+                    <label for="title">Title</label>
+                    <input type="text" name="title" placeholder="<%= book.title %>" />
+                    <br><br>
+                    <label for="author">Author</label>
+                    <input type="text" name="author" placeholder="<%= book.author %>" />
+                    <br><br>
+                    <label for="description">Description</label>
+                    <textarea name="description" id="updateDescript" placeholder="<%= book.description %>" cols="30"
+                        rows="10"></textarea>
+                    <br><br>
+                    <label for="image_url">Image URL</label>
+                    <input type="text" name="image_url" placeholder="<%= book.image_url %>" />
+                    <br><br>
+                    <label for="isbn">ISBN 13</label>
+                    <input type="text" name="isbn" placeholder="<%= book.isbn %>" />
+                </fieldset>
+            </form>
 
-              <!-- method override -->
-              <form action="/pages/books/<%= book.id %>?_method=DELETE" method="POST">
-                <button>DELETE</button>
-              </form>
-              <a href="/pages/books/<%= book.id %>/edit">Update Entry</a>
         </div>
-    </div>
         <script src="" async defer></script>
-    </body>
+</body>
+
 </html>

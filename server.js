@@ -5,7 +5,7 @@ require('dotenv').config();
 const express = require('express');
 const superagent = require('superagent');
 const pg = require('pg');
-// const methodOverride = require('method-override');
+const methodOverride = require('method-override');
 
 
 if (!process.env.DATABASE_URL) {
@@ -19,7 +19,7 @@ app.set('view engine', 'ejs');
 
 app.use(express.static('./public'));
 app.use(express.urlencoded({ extended: true }));
-// app.use(methodOverride('_method'));
+app.use(methodOverride('_method'));
 
 // Routes
 app.get('/', getBooks);
@@ -39,7 +39,8 @@ app.post('/add', (request, response) => {
 });
 app.get('/pages/books/:id', (request, response) => {
   getThatBook(request, response);
-}) 
+});
+app.delete('/pages/books/:id', deleteThisTask); 
 
 
 app.get('*', (req, res) => res.status(404).send('this route does not exist'));
@@ -91,6 +92,17 @@ function getThatBook(request, response) {
     console.log(err);
   });
   
+}
+
+function deleteThisTask(request, response) {
+  const SQL = 'DELETE FROM books WHERE id = $1';
+  let id = request.param('id');
+  client.query(SQL, [id])
+  .then(() => {
+    response.redirect('/');
+  }).catch(err => {
+    console.log(err)
+  });
 }
 
 

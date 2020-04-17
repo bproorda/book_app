@@ -17,6 +17,11 @@
             <h3><%= book.author %></h3>
             <p><%= book.description %></p>
             <p>ISBN13: <%= book.isbn %></p>
+
+              <!-- method override -->
+              <form action="/pages/books/<%= book.id %>?_method=DELETE" method="POST">
+                <button>DELETE</button>
+              </form>
         </div>
     </div>
         <script src="" async defer></script>

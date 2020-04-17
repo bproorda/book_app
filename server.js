@@ -31,20 +31,16 @@ app.get('/search', (request, response) => {
 app.post('/show', (request, response) => {
   console.log('/show', request.body);
   bookHandler(request, response);
-  // response.render('pages/searches/searches', {message1: 'The Library is closed due to PLAGUE!!!'});
+
 });
 
 app.post('/add', (request, response) => {
   setBookInDB(request, response);
-// response.render('pages/detail-view.ejs', {message1: request.body.title});
 });
+app.get('/pages/books/:id', (request, response) => {
+  getThatBook(request, response);
+}) 
 
-
-// app.get('/detail', (request, response) => {
-//   response.render('pages/books/detail');
-// });
-
-// app.delete('/detail/:book_id', deleteBook);
 
 app.get('*', (req, res) => res.status(404).send('this route does not exist'));
 
@@ -79,14 +75,12 @@ function Book(bookInfo) {
   this.isbn13 = parseISBN(bookInfo.volumeInfo.industryIdentifiers);
 }
 
-function addHandler(request, response) {
-  let idNumb = setBookInDB(request.body);
-  response.render('pages/detail-view.ejs', {book: request.body, idNumb});
+function getThatBook(request, response) {
+  let id = request.param;
+  response.render('pages/detail-view.ejs', {book: request.body});
 }
 
-// function deleteBook(request, response) {
-//   response.redirect('/');
-// }
+
 
 
 client.connect()
@@ -101,7 +95,7 @@ const cors = require('cors');
 app.use(cors());
 
 const PORT = process.env.PORT || 3000;
-// app.listen(PORT, () => console.log(`http://localhost:${PORT}`));
+
 
 function errorHandler(err, response) {
   let viewModel = {

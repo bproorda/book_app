@@ -10,9 +10,11 @@
         <%- include('../layout/header') %>
     </header>
     <div class="wrapper">
-        <div class="search-heading">
-            <h2>Update Details</h2>
-        </div>
+        <ul class="search-heading">
+            <li><a href="/">Home</a></li>
+            <li><a href="/search">Search</a></li>
+    </ul>
+    <h2>Update Details</h2>
         <div>
             <img src="<%= book.image_url %>" />
             <form id="updateForm" action="/pages/books/<%= book.id %>?_method=PUT" method="post">

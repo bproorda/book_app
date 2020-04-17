@@ -41,7 +41,8 @@ app.get('/pages/books/:id', (request, response) => {
   getThatBook(request, response);
 });
 app.delete('/pages/books/:id', deleteThisBook);
-app.get('/pages/books/:id/edit', updateThisBook)
+app.get('/pages/books/:id/edit', updateFormPage);
+app.put('/pages/books/:id/', updateThisBook);
 
 
 app.get('*', (req, res) => res.status(404).send('this route does not exist'));
@@ -102,7 +103,7 @@ function deleteThisBook(request, response) {
       console.log(err)
     });
 }
-function updateThisBook(request, response) {
+function updateFormPage(request, response) {
   let id = request.params.id;
   console.log(`Search DB for book with id = ${id}`);
   let SQL = 'SELECT * FROM books WHERE id = $1';
@@ -112,6 +113,12 @@ function updateThisBook(request, response) {
     const viewModel = { book };
     response.render('pages/edit-view.ejs', viewModel);
   })
+}
+
+function updateThisBook(request, response, next) {
+  const id = request.params.id;
+  const {title, author, description, image_url, isbn} = request.body;
+  const SQL = 'UPDATE books SET'
 }
 
 

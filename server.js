@@ -35,7 +35,7 @@ app.post('/show', (request, response) => {
 });
 
 app.post('/add', (request, response) => {
-  addHandler(request, response);
+  setBookInDB(request, response);
 // response.render('pages/detail-view.ejs', {message1: request.body.title});
 });
 
@@ -62,11 +62,8 @@ function bookHandler(request, response) {
     })
     .then(bookResponse => {
       let bookData = JSON.parse(bookResponse.text);
-      // setBookInDB(new Book(bookData.items[0]));
       let books = bookData.items.map(thisBook => {
         let newBook = new Book(thisBook);
-        // setBookInDB(newBook);
-        console.log(newBook.title);
         return newBook;
       });
       response.render('pages/searches/show', { data: books } );
@@ -135,21 +132,22 @@ function parseISBN(isbnLink) {
   }
 }
 
-function setBookInDB(newBook) {
+function setBookInDB(request, response) {
+  let newBook = request.body
   const searchSQL = 'SELECT * FROM books WHERE title = $1';
   const searchParameter = [newBook.title];
   return client.query(searchSQL, searchParameter)
     .then(searchResult => {
       if(searchResult.rowCount === 0) {
-        const SQL = 'INSERT INTO books (author, title, isbn, image_url, description) VALUES ($1, $2, $3, $4, $5)';
+        const SQL = 'INSERT INTO books (author, title, isbn, image_url, description) VALUES ($1, $2, $3, $4, $5) Returning id';
         const sqlParameters = [newBook.author, newBook.title, newBook.isbn13, newBook.image_url, newBook.description];
         return client.query(SQL, sqlParameters).then(result => {
           console.log('Book saved', result);
-        }).catch(err => {
-          console.log(err);
-        });
+          let id = result.rows[0].id;
+          response.redirect(`/pages/books/${id}`);
+        })
       }
-    });
+    }).catch(err => { throw err; });
 }
 
 function getBooks(request, response) {

@@ -77,11 +77,8 @@ function Book(bookInfo) {
 }
 
 function getThatBook(request, response) {
-  //changed to request.param('id') from request.param.id must be request.paramS.id
-  let id = request.param('id');
+  let id = request.params.id;
   console.log(id);
-  //this line below works mostly;
-  // let SQLparam = [1];
   let SQLparam = [id];
   const SQL = ` SELECT * FROM books WHERE id = $1`;
   client.query(SQL, [id])

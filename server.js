@@ -163,6 +163,10 @@ function setBookInDB(request, response) {
           let id = result.rows[0].id;
           response.redirect(`/pages/books/${id}`);
         })
+      } else {
+        let id = searchResult.rows[0].id;
+        console.log('book already saved!')
+          response.redirect(`/pages/books/${id}`);
       }
     }).catch(err => { throw err; });
 }

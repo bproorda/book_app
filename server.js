@@ -76,8 +76,19 @@ function Book(bookInfo) {
 }
 
 function getThatBook(request, response) {
-  let id = request.param;
-  response.render('pages/detail-view.ejs', {book: request.body});
+  let { id } = request.param;
+  //this line below works mostly;
+  let SQLparam = [1];
+  //this does not;
+  // let SQLparam = [id];
+  const SQL = ` SELECT * FROM books WHERE id = $1`;
+  client.query(SQL, SQLparam)
+  .then(results => {
+    const { rows } = results;
+    response.render('pages/detail-view.ejs', {book: rows[0]})
+  }).catch(err =>
+    errorHandler(err, response));
+  
 }
 
 

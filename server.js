@@ -108,17 +108,23 @@ function updateFormPage(request, response) {
   console.log(`Search DB for book with id = ${id}`);
   let SQL = 'SELECT * FROM books WHERE id = $1';
   client.query(SQL, [id])
-  .then(results => {
-    const book = results.rows[0];
-    const viewModel = { book };
-    response.render('pages/edit-view.ejs', viewModel);
-  })
+    .then(results => {
+      const book = results.rows[0];
+      const viewModel = { book };
+      response.render('pages/edit-view.ejs', viewModel);
+    })
 }
 
 function updateThisBook(request, response, next) {
   const id = request.params.id;
-  const {title, author, description, image_url, isbn} = request.body;
-  const SQL = 'UPDATE books SET'
+  const { title, author, description, image_url, isbn } = request.body;
+  const SQL = 'UPDATE books SET title = $1, author = $2, description = $3, image_url = $4, isbn = $5 WHERE id = $6';
+  const parameters = [title, author, description, image_url, isbn, id];
+  client.query(SQL, parameters)
+    .then(() => {
+      response.redirect(`/pages/books/${id}`);
+    })
+    .catch(next);
 }
 
 

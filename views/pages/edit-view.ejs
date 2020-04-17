@@ -19,20 +19,20 @@
                 <fieldset>
                     <legend>Update the entries</legend>
                     <label for="title">Title</label>
-                    <input type="text" name="title" placeholder="<%= book.title %>" />
+                    <input type="text" name="title" value="<%= book.title %>" />
                     <br><br>
                     <label for="author">Author</label>
-                    <input type="text" name="author" placeholder="<%= book.author %>" />
+                    <input type="text" name="author" value="<%= book.author %>" />
                     <br><br>
                     <label for="description">Description</label>
-                    <textarea name="description" id="updateDescript" placeholder="<%= book.description %>" cols="30"
-                        rows="10"></textarea>
+                    <textarea name="description" id="updateDescript" value="<%= book.description %>" cols="30"
+                        rows="10"><%= book.description %></textarea>
                     <br><br>
                     <label for="image_url">Image URL</label>
-                    <input type="text" name="image_url" placeholder="<%= book.image_url %>" />
+                    <input type="text" name="image_url" value="<%= book.image_url %>" />
                     <br><br>
                     <label for="isbn">ISBN 13</label>
-                    <input type="text" name="isbn" placeholder="<%= book.isbn %>" />
+                    <input type="text" name="isbn" value="<%= book.isbn %>" />
                 </fieldset>
                 <button class="update-library-button">
                     Update

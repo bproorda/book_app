@@ -5,7 +5,7 @@ require('dotenv').config();
 const express = require('express');
 const superagent = require('superagent');
 const pg = require('pg');
-// const methodOverride = require('method-override');
+const methodOverride = require('method-override');
 
 
 if (!process.env.DATABASE_URL) {
@@ -19,7 +19,7 @@ app.set('view engine', 'ejs');
 
 app.use(express.static('./public'));
 app.use(express.urlencoded({ extended: true }));
-// app.use(methodOverride('_method'));
+app.use(methodOverride('_method'));
 
 // Routes
 app.get('/', getBooks);
@@ -31,20 +31,17 @@ app.get('/search', (request, response) => {
 app.post('/show', (request, response) => {
   console.log('/show', request.body);
   bookHandler(request, response);
-  // response.render('pages/searches/searches', {message1: 'The Library is closed due to PLAGUE!!!'});
+
 });
 
 app.post('/add', (request, response) => {
-  addHandler(request, response);
-// response.render('pages/detail-view.ejs', {message1: request.body.title});
+  setBookInDB(request, response);
 });
+app.get('/pages/books/:id', (request, response) => {
+  getThatBook(request, response);
+});
+app.delete('/pages/books/:id', deleteThisTask); 
 
-
-// app.get('/detail', (request, response) => {
-//   response.render('pages/books/detail');
-// });
-
-// app.delete('/detail/:book_id', deleteBook);
 
 app.get('*', (req, res) => res.status(404).send('this route does not exist'));
 
@@ -62,11 +59,8 @@ function bookHandler(request, response) {
     })
     .then(bookResponse => {
       let bookData = JSON.parse(bookResponse.text);
-      // setBookInDB(new Book(bookData.items[0]));
       let books = bookData.items.map(thisBook => {
         let newBook = new Book(thisBook);
-        // setBookInDB(newBook);
-        console.log(newBook.title);
         return newBook;
       });
       response.render('pages/searches/show', { data: books } );
@@ -82,14 +76,33 @@ function Book(bookInfo) {
   this.isbn13 = parseISBN(bookInfo.volumeInfo.industryIdentifiers);
 }
 
-function addHandler(request, response) {
-  let idNumb = setBookInDB(request.body);
-  response.render('pages/detail-view.ejs', {book: request.body, idNumb});
+function getThatBook(request, response) {
+  let id = request.params.id;
+  console.log(id);
+  let SQLparam = [id];
+  const SQL = ` SELECT * FROM books WHERE id = $1`;
+  client.query(SQL, [id])
+  .then(results => {
+    const { rows } = results;
+    response.render('pages/detail-view.ejs', {book: rows[0]})
+  }) .catch(err => {
+    console.log(err);
+  });
+  
 }
 
-// function deleteBook(request, response) {
-//   response.redirect('/');
-// }
+function deleteThisTask(request, response) {
+  const SQL = 'DELETE FROM books WHERE id = $1';
+  let id = request.param('id');
+  client.query(SQL, [id])
+  .then(() => {
+    response.redirect('/');
+  }).catch(err => {
+    console.log(err)
+  });
+}
+
+
 
 
 client.connect()
@@ -104,7 +117,7 @@ const cors = require('cors');
 app.use(cors());
 
 const PORT = process.env.PORT || 3000;
-// app.listen(PORT, () => console.log(`http://localhost:${PORT}`));
+
 
 function errorHandler(err, response) {
   let viewModel = {
@@ -135,21 +148,23 @@ function parseISBN(isbnLink) {
   }
 }
 
-function setBookInDB(newBook) {
+function setBookInDB(request, response) {
+  let newBook = request.body
+  console.log(newBook);
   const searchSQL = 'SELECT * FROM books WHERE title = $1';
   const searchParameter = [newBook.title];
   return client.query(searchSQL, searchParameter)
     .then(searchResult => {
       if(searchResult.rowCount === 0) {
-        const SQL = 'INSERT INTO books (author, title, isbn, image_url, description) VALUES ($1, $2, $3, $4, $5)';
+        const SQL = 'INSERT INTO books (author, title, isbn, image_url, description) VALUES ($1, $2, $3, $4, $5) Returning id';
         const sqlParameters = [newBook.author, newBook.title, newBook.isbn13, newBook.image_url, newBook.description];
         return client.query(SQL, sqlParameters).then(result => {
           console.log('Book saved', result);
-        }).catch(err => {
-          console.log(err);
-        });
+          let id = result.rows[0].id;
+          response.redirect(`/pages/books/${id}`);
+        })
       }
-    });
+    }).catch(err => { throw err; });
 }
 
 function getBooks(request, response) {

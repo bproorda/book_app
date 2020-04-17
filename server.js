@@ -77,7 +77,7 @@ function Book(bookInfo) {
 }
 
 function getThatBook(request, response) {
-  //changed to request.param('id') from request.param.id
+  //changed to request.param('id') from request.param.id must be request.paramS.id
   let id = request.param('id');
   console.log(id);
   //this line below works mostly;
@@ -153,6 +153,7 @@ function parseISBN(isbnLink) {
 
 function setBookInDB(request, response) {
   let newBook = request.body
+  console.log(newBook);
   const searchSQL = 'SELECT * FROM books WHERE title = $1';
   const searchParameter = [newBook.title];
   return client.query(searchSQL, searchParameter)

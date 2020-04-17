@@ -76,18 +76,21 @@ function Book(bookInfo) {
 }
 
 function getThatBook(request, response) {
-  let { id } = request.param;
+  //changed to request.param('id') from request.param.id
+  let id = request.param('id');
+  console.log(id);
   //this line below works mostly;
-  let SQLparam = [1];
+  // let SQLparam = [1];
   //this does not;
-  // let SQLparam = [id];
+  let SQLparam = [id];
   const SQL = ` SELECT * FROM books WHERE id = $1`;
-  client.query(SQL, SQLparam)
+  client.query(SQL, [id])
   .then(results => {
     const { rows } = results;
     response.render('pages/detail-view.ejs', {book: rows[0]})
-  }).catch(err =>
-    errorHandler(err, response));
+  }) .catch(err => {
+    console.log(err);
+  });
   
 }
 

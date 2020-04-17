@@ -81,7 +81,6 @@ function getThatBook(request, response) {
   console.log(id);
   //this line below works mostly;
   // let SQLparam = [1];
-  //this does not;
   let SQLparam = [id];
   const SQL = ` SELECT * FROM books WHERE id = $1`;
   client.query(SQL, [id])
